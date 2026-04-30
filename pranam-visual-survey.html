@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRANAM Survey</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#1e3d1a;--green2:#2d5a27;--green3:#3a7532;
+  --orange:#e85d04;--orangeL:#f97316;
+  --cream:#f5f0e8;--gold:#c9a84c;--goldL:#e8d48b;
+  --white:#fff;--muted:#6b7280;--border:#e5e7eb;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--cream);min-height:100vh;color:#1a1a1a}
+
+/* HEADER */
+.survey-header{background:var(--green);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.brand{display:flex;align-items:center}
+.brand img{height:52px;width:auto;filter:brightness(0) invert(1)}
+.progress-wrap{flex:1;max-width:400px;margin:0 24px}
+.progress-label{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px;display:flex;justify-content:space-between}
+.progress-bar{height:6px;background:rgba(255,255,255,.15);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .4s ease}
+.step-indicator{font-size:13px;font-weight:700;color:var(--gold);white-space:nowrap}
+
+/* WRAPPER */
+.survey-wrap{max-width:720px;margin:0 auto;padding:32px 16px 80px}
+
+/* SECTION TITLE */
+.sec-title-card{background:var(--green);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden}
+.sec-title-card::before{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)}
+.sec-tag{font-size:10px;letter-spacing:4px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.sec-name{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px}
+.sec-desc{font-size:13px;color:rgba(255,255,255,.65);line-height:1.6}
+
+/* QUESTION CARD */
+.q-card{background:#fff;border-radius:14px;padding:24px;margin-bottom:16px;border:2px solid transparent;transition:border-color .2s,box-shadow .2s;animation:fadeUp .3s both}
+.q-card.answered{border-color:#d1fae5}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.q-num{font-size:10px;font-weight:700;color:var(--orange);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.q-text{font-size:16px;font-weight:700;color:var(--green);margin-bottom:18px;line-height:1.45}
+.q-hint{font-size:12px;color:var(--muted);margin-top:-10px;margin-bottom:14px;font-style:italic}
+
+/* MCQ */
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .18s;user-select:none}
+.choice:hover{border-color:var(--green2);background:#f0f7ee}
+.choice.selected{border-color:var(--green);background:#e8f5e2}
+.choice-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s}
+.choice.selected .choice-dot{background:var(--green);border-color:var(--green)}
+.choice-dot::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff;opacity:0;transition:opacity .18s}
+.choice.selected .choice-dot::after{opacity:1}
+.choice-label{font-size:14px;font-weight:500;color:#333}
+.choice.selected .choice-label{color:var(--green);font-weight:600}
+
+/* CHECKBOX */
+.check-dot{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s}
+.choice.selected .check-dot{background:var(--green);border-color:var(--green)}
+.check-dot::after{content:'✓';font-size:12px;font-weight:800;color:#fff;opacity:0;transition:opacity .18s}
+.choice.selected .check-dot::after{opacity:1}
+
+/* SLIDER */
+.slider-wrap{padding:8px 4px}
+.slider-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:500}
+.custom-slider{-webkit-appearance:none;width:100%;height:6px;border-radius:4px;background:var(--border);outline:none;transition:background .3s}
+.custom-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--green);cursor:pointer;box-shadow:0 2px 8px rgba(30,61,26,.3);border:3px solid #fff;transition:transform .15s}
+.custom-slider::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.custom-slider::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--green);cursor:pointer;border:3px solid #fff}
+.slider-val-display{text-align:center;margin-top:12px;font-size:22px;font-weight:800;color:var(--green)}
+.slider-val-label{text-align:center;font-size:12px;color:var(--muted);margin-top:2px}
+
+/* GRID RATING */
+.grid-table{width:100%;border-collapse:collapse}
+.grid-table th{font-size:11px;color:var(--muted);font-weight:600;padding:6px 8px;text-align:center}
+.grid-table th:first-child{text-align:left}
+.grid-table td{padding:8px;border-top:1px solid var(--border)}
+.grid-table td:first-child{font-size:13px;font-weight:500;color:#333;padding-right:12px}
+.grid-radio{display:flex;justify-content:center}
+.grid-radio input{display:none}
+.grid-radio label{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s}
+.grid-radio input:checked+label{background:var(--green);border-color:var(--green);color:#fff}
+.grid-radio label:hover{border-color:var(--green2);background:#f0f7ee}
+
+/* TEXTAREA */
+.q-textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:14px;font-size:14px;font-family:inherit;color:#333;resize:vertical;min-height:90px;outline:none;transition:border-color .2s}
+.q-textarea:focus{border-color:var(--green2)}
+
+/* NAV BUTTONS */
+.nav-btns{display:flex;justify-content:space-between;align-items:center;margin-top:28px;gap:12px}
+.btn-prev{background:#fff;border:2px solid var(--border);color:var(--green);padding:13px 28px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-prev:hover{border-color:var(--green)}
+.btn-next{background:var(--green);color:#fff;padding:13px 36px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s;display:flex;align-items:center;gap:8px}
+.btn-next:hover{background:var(--green2)}
+.btn-next.submit{background:var(--orange)}
+.btn-next.submit:hover{background:var(--orangeL)}
+.req-note{font-size:12px;color:var(--muted)}
+
+/* SECTION DOTS */
+.section-dots{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
+.sdot{width:8px;height:8px;border-radius:50%;background:rgba(30,61,26,.15);transition:all .2s}
+.sdot.active{background:var(--green);width:24px;border-radius:4px}
+.sdot.done{background:var(--green2)}
+
+/* SUCCESS */
+.success{display:none;text-align:center;padding:48px 24px}
+.success-icon{font-size:72px;margin-bottom:20px}
+.success h2{font-size:28px;font-weight:800;color:var(--green);margin-bottom:12px}
+.success p{font-size:15px;color:var(--muted);line-height:1.7;max-width:440px;margin:0 auto 28px}
+.success-badge{display:inline-block;background:var(--green);color:#fff;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:700}
+
+/* VALIDATION */
+.val-err{font-size:12px;color:#dc2626;margin-top:8px;display:none}
+.q-card.error{border-color:#fca5a5}
+.q-card.error .val-err{display:block}
+
+@media(max-width:600px){
+  .survey-wrap{padding:20px 12px 80px}
+  .q-text{font-size:14px}
+  .grid-table th:first-child,.grid-table td:first-child{font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<div class="survey-header">
+  <div class="brand">
+    <img src="pranam-logo.png" alt="PRANAM — Earth. Farmer. Food." title="Prakruthi Raithu Aadhaaritha Natural Aahar Movement">
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="progLabel">Section 1 of 8</span>
+      <span id="progPct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="step-indicator" id="stepInd">1 / 8</div>
+</div>
+
+<div class="survey-wrap">
+  <div class="section-dots" id="sectionDots"></div>
+  <div id="surveyContent"></div>
+  <div class="success" id="successScreen">
+    <div class="success-icon">🙏</div>
+    <h2>Thank you for your time!</h2>
+    <p>Your responses will directly shape how PRANAM serves farmers and families across South India.<br><br>We'll reach out soon with updates on our launch.</p>
+    <div class="success-badge">🌿 Pranam — Earth. Farmer. Food.</div>
+  </div>
+</div>
+
+<script>
+const sections = [
+  {
+    title:"About You", tag:"Section A",
+    desc:"Understanding who you are helps us serve you better.",
+    icon:"👤",
+    questions:[
+      {id:"q1",type:"mcq",text:"What is your age group?",options:["Under 25","25–35","36–45","46–55","55+"],required:true},
+      {id:"q2",type:"mcq",text:"Where do you currently live?",options:["Tier-1 city (Hyderabad, Bengaluru, Chennai…)","Tier-2 city (Vijayawada, Mysuru, Warangal…)","Small town","Rural area"],required:true},
+      {id:"q3",type:"mcq",text:"What best describes your household?",options:["Single / Young professional","Nuclear family (with children)","Joint family","Senior household (60+)"],required:true},
+      {id:"q4",type:"mcq",text:"Monthly household food & grocery spend?",options:["Below ₹3,000","₹3,000 – ₹6,000","₹6,000 – ₹10,000","Above ₹10,000"],required:true},
+      {id:"q5",type:"mcq",text:"Who makes most food-buying decisions in your household?",options:["Self","Spouse / Partner","Parent","Shared decision"],required:true},
+    ]
+  },
+  {
+    title:"Buying Behaviour", tag:"Section B",
+    desc:"How and where you currently shop.",
+    icon:"🛒",
+    questions:[
+      {id:"q6",type:"checkbox",text:"Where do you primarily buy groceries today?",hint:"Select up to 3",options:["Local kirana store","Supermarket / Hypermarket","Online grocery (BigBasket, Blinkit, Zepto…)","Directly from farmers / mandis","Specialty organic stores","Subscription boxes"],required:true},
+      {id:"q7",type:"mcq",text:"How often do you buy natural / organic / chemical-free food?",options:["Never","Occasionally","Monthly","Weekly","Always"],required:true},
+      {id:"q8",type:"checkbox",text:"What natural food categories do you currently buy?",hint:"Select all that apply",options:["Desi rice varieties","Millets & sorghum","Cold-pressed oils","Traditional pulses & lentils","Forest honey / jaggery","A2 desi cow ghee","Organic spices & turmeric","Moringa / superfoods","None of the above"],required:true},
+      {id:"q9",type:"mcq",text:"How do you currently find natural food products?",options:["Word of mouth / friends & family","Social media (Instagram, YouTube…)","Online search / Google","Visiting a local organic store","I don't buy it yet"],required:true},
+    ]
+  },
+  {
+    title:"Pain Points", tag:"Section C",
+    desc:"The problems PRANAM is designed to solve.",
+    icon:"😤",
+    questions:[
+      {id:"q10",type:"checkbox",text:"Biggest frustration when buying natural or healthy food?",hint:"Pick your top 2",options:["High prices / not affordable","Can't trust 'organic' or 'natural' claims","Limited variety / hard to find","No info about the farmer or source","Inconsistent quality between purchases","Poor packaging / short shelf life","Inconvenient to buy"],required:true},
+      {id:"q11",type:"mcq",text:"Have you ever doubted if a product labelled 'organic' was actually authentic?",options:["Yes, frequently","Yes, occasionally","No, never","Not sure"],required:true},
+      {id:"q12",type:"slider",text:"How important is it to know WHICH FARMER grew your food?",min:1,max:5,minLabel:"Not important",maxLabel:"Absolutely essential",required:true},
+      {id:"q13",type:"slider",text:"How concerned are you about pesticide residues in your daily food?",min:1,max:5,minLabel:"Not concerned",maxLabel:"Extremely concerned",required:true},
+      {id:"q14",type:"mcq",text:"Have you or your family changed diet due to a lifestyle disease (diabetes, cholesterol, gut issues…)?",options:["Yes, significantly","Yes, somewhat","No","Prefer not to say"],required:false},
+      {id:"q15",type:"mcq",text:"Have you tried buying directly from a farmer and found it difficult?",options:["Yes","No","Never tried","Would like to try"],required:true},
+    ]
+  },
+  {
+    title:"Your Values", tag:"Section D",
+    desc:"What matters to you about food and farming.",
+    icon:"🌿",
+    questions:[
+      {id:"q16",type:"slider",text:'"I want to support natural farming farmers, even if food costs slightly more."',min:1,max:5,minLabel:"Strongly disagree",maxLabel:"Strongly agree",required:true},
+      {id:"q17",type:"mcq",text:"Would you pay a premium for verified pesticide-free, farm-traceable food?",options:["No, price matters most","Yes, up to 10% more","Yes, up to 20–25% more","Yes, significantly more if quality is proven"],required:true},
+      {id:"q18",type:"grid",text:"How important are these to your purchase decision?",hint:"Rate each from 1 (not important) to 5 (essential)",rows:["Farmer's identity & story","Indigenous / heirloom seed variety","Certified chemical-free process","QR code traceability on pack","Fair price to farmer","Eco-friendly packaging"],cols:["1","2","3","4","5"],required:true},
+      {id:"q19",type:"mcq",text:"Do you believe current food supply chains treat farmers fairly?",options:["Yes","No","Not sure","It depends"],required:true},
+    ]
+  },
+  {
+    title:"What You Want", tag:"Section E",
+    desc:"Products and platform preferences.",
+    icon:"🛍️",
+    questions:[
+      {id:"q20",type:"checkbox",text:"Which PRANAM product categories interest you?",hint:"Select all that apply",options:["Traditional rice varieties","Millets & ancient grains","Cold-pressed oils","Native pulses & dals","Raw forest honey & organic jaggery","A2 bilona ghee","Single-origin spices & turmeric","Moringa & herbal powders"],required:true},
+      {id:"q21",type:"mcq",text:"Preferred pack size for staples (rice, millets, pulses)?",options:["500g (trial)","1 kg","2–5 kg","10 kg+ (bulk)"],required:true},
+      {id:"q22",type:"checkbox",text:"How would you prefer to shop with PRANAM?",hint:"Select all that apply",options:["Mobile app","Website","WhatsApp ordering","Subscription / auto-refill box","Offline store / kiosk","Through local community group or RWA"],required:true},
+      {id:"q23",type:"mcq",text:"How often would you ideally order?",options:["Weekly","Fortnightly","Monthly","Quarterly","As needed"],required:true},
+      {id:"q24",type:"mcq",text:"Acceptable delivery time for natural farm produce?",options:["Same day","Next day","2–3 days","Up to 5 days (if freshness guaranteed)"],required:true},
+      {id:"q25",type:"checkbox",text:"What would make you more confident buying from PRANAM?",hint:"Pick your top 3",options:["QR code — see farmer name, location & harvest date","Video / photo of the actual farm","Third-party lab test certificate on every batch","Customer reviews from verified buyers","Story card inside pack about the farmer","Live chat / WhatsApp support"],required:true},
+    ]
+  },
+  {
+    title:"Pricing", tag:"Section F",
+    desc:"Help us set prices fair to both farmers and families.",
+    icon:"💰",
+    questions:[
+      {id:"q26",type:"mcq",text:"Fair price for 1 kg verified natural, pesticide-free Sona Masuri rice?",options:["Below ₹120","₹120 – ₹160","₹160 – ₹220","₹220 – ₹280","Above ₹280"],required:true},
+      {id:"q27",type:"mcq",text:"Fair price for 500 ml cold-pressed, wood-pressed groundnut oil?",options:["Below ₹200","₹200 – ₹280","₹280 – ₹380","Above ₹380"],required:true},
+      {id:"q28",type:"mcq",text:"Would you subscribe to a monthly natural food box curated by season & farmer?",options:["Definitely yes","Probably yes","Unsure","Probably no","Definitely no"],required:true},
+      {id:"q29",type:"mcq",text:"Reasonable monthly value for a family natural food subscription box?",options:["Below ₹500","₹500 – ₹1,000","₹1,000 – ₹2,000","Above ₹2,000"],required:true},
+    ]
+  },
+  {
+    title:"Trust & Discovery", tag:"Section G",
+    desc:"How we earn your trust and reach you.",
+    icon:"🤝",
+    questions:[
+      {id:"q30",type:"checkbox",text:"What would most increase your trust in a new natural food brand?",hint:"Pick top 2",options:["Government / FSSAI certification","Third-party lab testing of each batch","Farmer verification with photo ID","Positive word of mouth from someone I trust","Transparent supply chain / QR traceability","Influencer or expert endorsement"],required:true},
+      {id:"q31",type:"mcq",text:"Where do you most often discover new food or health products?",options:["Instagram / YouTube Reels","WhatsApp groups (family / community)","Doctor / nutritionist recommendation","Friends & family","Online articles / blogs","Supermarket / shelf discovery"],required:true},
+      {id:"q32",type:"mcq",text:"Have you heard of G.R.O.W or any farmer-to-consumer natural food network?",options:["Yes, I know it well","Heard of it briefly","No, first time","Not sure"],required:true},
+    ]
+  },
+  {
+    title:"Your Voice", tag:"Section H",
+    desc:"Open feedback — your answers here matter the most.",
+    icon:"💬",
+    questions:[
+      {id:"q33",type:"textarea",text:"The ONE biggest change you wish would happen in how natural food is sold in India?",required:false},
+      {id:"q34",type:"textarea",text:"What would stop you from buying from PRANAM even if you liked the idea?",required:false},
+      {id:"q35",type:"textarea",text:"Is there a traditional food from your region you wish you could find but can't today?",required:false},
+      {id:"q36",type:"textarea",text:"Any other feedback, suggestions or questions for the PRANAM team?",required:false},
+    ]
+  }
+];
+
+const answers={};
+let current=0;
+const sliderLabels={1:"Very Low",2:"Low",3:"Moderate",4:"High",5:"Very High"};
+
+function renderDots(){
+  const c=document.getElementById('sectionDots');
+  c.innerHTML=sections.map((_,i)=>`<div class="sdot ${i===current?'active':i<current?'done':''}" onclick="jumpTo(${i})"></div>`).join('');
+}
+
+function updateProgress(){
+  const pct=Math.round((current/sections.length)*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('progLabel').textContent=`Section ${current+1} of ${sections.length}`;
+  document.getElementById('stepInd').textContent=`${current+1} / ${sections.length}`;
+}
+
+function renderSection(){
+  const s=sections[current];
+  let qNum=sections.slice(0,current).reduce((a,sec)=>a+sec.questions.length,0);
+  let html=`<div class="sec-title-card">
+    <div class="sec-tag">${s.tag} ${s.icon}</div>
+    <div class="sec-name">${s.title}</div>
+    <div class="sec-desc">${s.desc}</div>
+  </div>`;
+
+  s.questions.forEach((q,qi)=>{
+    qNum++;
+    const answered = answers[q.id]!==undefined && answers[q.id]!=='' && !(Array.isArray(answers[q.id])&&answers[q.id].length===0);
+    html+=`<div class="q-card ${answered?'answered':''}" id="card_${q.id}">
+      <div class="q-num">Q${qNum} ${q.required?'<span style="color:var(--orange)">*</span>':''}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.hint?`<div class="q-hint">${q.hint}</div>`:''}
+      ${renderQuestion(q)}
+      <div class="val-err" id="err_${q.id}">Please answer this question to continue.</div>
+    </div>`;
+  });
+
+  const isLast=current===sections.length-1;
+  html+=`<div class="nav-btns">
+    ${current>0?`<button class="btn-prev" onclick="prevSection()">← Back</button>`:`<div></div>`}
+    <span class="req-note">${s.questions.filter(q=>q.required).length > 0 ? '* Required questions' : ''}</span>
+    <button class="btn-next ${isLast?'submit':''}" onclick="nextSection()">
+      ${isLast?'Submit Survey ✓':'Next Section →'}
+    </button>
+  </div>`;
+
+  document.getElementById('surveyContent').innerHTML=html;
+  restoreAnswers(s);
+  renderDots();
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderQuestion(q){
+  if(q.type==='mcq'){
+    return`<div class="choices">${q.options.map(o=>`
+      <div class="choice" onclick="selectMCQ('${q.id}','${o.replace(/'/g,"\\'")}',this)">
+        <div class="choice-dot"></div>
+        <span class="choice-label">${o}</span>
+      </div>`).join('')}</div>`;
+  }
+  if(q.type==='checkbox'){
+    return`<div class="choices" id="chk_${q.id}">${q.options.map(o=>`
+      <div class="choice" onclick="toggleCheck('${q.id}','${o.replace(/'/g,"\\'")}',this)">
+        <div class="check-dot"></div>
+        <span class="choice-label">${o}</span>
+      </div>`).join('')}</div>`;
+  }
+  if(q.type==='slider'){
+    const val=answers[q.id]||3;
+    return`<div class="slider-wrap">
+      <div class="slider-labels"><span>${q.minLabel}</span><span>${q.maxLabel}</span></div>
+      <input type="range" class="custom-slider" min="${q.min}" max="${q.max}" value="${val}"
+        oninput="updateSlider('${q.id}',this.value)"
+        style="background:linear-gradient(to right,var(--green) ${((val-1)/4)*100}%,var(--border) ${((val-1)/4)*100}%)">
+      <div class="slider-val-display" id="sv_${q.id}">${val}</div>
+      <div class="slider-val-label" id="svl_${q.id}">${getSliderLabel(q,val)}</div>
+    </div>`;
+  }
+  if(q.type==='grid'){
+    let rows=q.rows.map((r,ri)=>`<tr>
+      <td>${r}</td>
+      ${q.cols.map(c=>`<td><div class="grid-radio">
+        <input type="radio" name="grid_${q.id}_${ri}" id="g_${q.id}_${ri}_${c}" value="${c}"
+          onchange="setGrid('${q.id}',${ri},'${c}')">
+        <label for="g_${q.id}_${ri}_${c}">${c}</label>
+      </div></td>`).join('')}
+    </tr>`).join('');
+    return`<div style="overflow-x:auto"><table class="grid-table">
+      <tr><th></th>${q.cols.map(c=>`<th>${c}</th>`).join('')}</tr>
+      ${rows}
+    </table></div>`;
+  }
+  if(q.type==='textarea'){
+    return`<textarea class="q-textarea" id="ta_${q.id}" placeholder="Type your answer here…"
+      oninput="setTextarea('${q.id}',this.value)"
+      onchange="markAnswered('${q.id}')">${answers[q.id]||''}</textarea>`;
+  }
+  return'';
+}
+
+function getSliderLabel(q,val){
+  if(q.id==='q12')return["","Not important","Slightly important","Moderately important","Very important","Absolutely essential"][val];
+  if(q.id==='q13')return["","Not concerned","Slightly concerned","Moderately concerned","Very concerned","Extremely concerned"][val];
+  if(q.id==='q16')return["","Strongly disagree","Disagree","Neutral","Agree","Strongly agree"][val];
+  return sliderLabels[val]||val;
+}
+
+function updateSlider(id,val){
+  val=parseInt(val);
+  answers[id]=val;
+  document.getElementById('sv_'+id).textContent=val;
+  const q=sections.flatMap(s=>s.questions).find(q=>q.id===id);
+  document.getElementById('svl_'+id).textContent=getSliderLabel(q,val);
+  const pct=((val-1)/4)*100;
+  const el=document.querySelector(`input[oninput*="${id}"]`);
+  if(el)el.style.background=`linear-gradient(to right,var(--green) ${pct}%,var(--border) ${pct}%)`;
+  markAnswered(id);
+}
+
+function selectMCQ(id,val,el){
+  answers[id]=val;
+  document.querySelectorAll(`#card_${id} .choice`).forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  markAnswered(id);
+  clearErr(id);
+}
+
+function toggleCheck(id,val,el){
+  if(!answers[id])answers[id]=[];
+  const idx=answers[id].indexOf(val);
+  if(idx>-1){answers[id].splice(idx,1);el.classList.remove('selected');}
+  else{answers[id].push(val);el.classList.add('selected');}
+  if(answers[id].length)markAnswered(id);
+  else document.getElementById('card_'+id).classList.remove('answered');
+  clearErr(id);
+}
+
+function setGrid(id,row,val){
+  if(!answers[id])answers[id]={};
+  answers[id][row]=val;
+  const q=sections.flatMap(s=>s.questions).find(q=>q.id===id);
+  if(q&&Object.keys(answers[id]).length===q.rows.length)markAnswered(id);
+  clearErr(id);
+}
+
+function setTextarea(id,val){
+  answers[id]=val;
+  if(val.trim())markAnswered(id);
+  else document.getElementById('card_'+id).classList.remove('answered');
+}
+
+function markAnswered(id){
+  const card=document.getElementById('card_'+id);
+  if(card){card.classList.add('answered');card.classList.remove('error');}
+  clearErr(id);
+}
+function clearErr(id){
+  const e=document.getElementById('err_'+id);
+  const c=document.getElementById('card_'+id);
+  if(e)e.style.display='none';
+  if(c)c.classList.remove('error');
+}
+
+function restoreAnswers(s){
+  s.questions.forEach(q=>{
+    if(!answers[q.id]&&q.type==='slider')answers[q.id]=3;
+    if(q.type==='mcq'&&answers[q.id]){
+      document.querySelectorAll(`#card_${q.id} .choice`).forEach(c=>{
+        if(c.querySelector('.choice-label').textContent===answers[q.id])c.classList.add('selected');
+      });
+    }
+    if(q.type==='checkbox'&&answers[q.id]){
+      document.querySelectorAll(`#card_${q.id} .choice`).forEach(c=>{
+        if(answers[q.id].includes(c.querySelector('.choice-label').textContent))c.classList.add('selected');
+      });
+    }
+    if(q.type==='grid'&&answers[q.id]){
+      Object.entries(answers[q.id]).forEach(([ri,cv])=>{
+        const el=document.getElementById(`g_${q.id}_${ri}_${cv}`);
+        if(el)el.checked=true;
+      });
+    }
+  });
+}
+
+function validate(){
+  let valid=true;
+  sections[current].questions.forEach(q=>{
+    if(!q.required)return;
+    let answered=false;
+    if(q.type==='mcq')answered=!!answers[q.id];
+    if(q.type==='checkbox')answered=answers[q.id]&&answers[q.id].length>0;
+    if(q.type==='slider')answered=answers[q.id]!==undefined;
+    if(q.type==='grid'){
+      const sec=sections.flatMap(s=>s.questions).find(x=>x.id===q.id);
+      answered=answers[q.id]&&Object.keys(answers[q.id]).length===sec.rows.length;
+    }
+    if(q.type==='textarea')answered=true; // optional
+    if(!answered){
+      valid=false;
+      const card=document.getElementById('card_'+q.id);
+      const err=document.getElementById('err_'+q.id);
+      if(card)card.classList.add('error');
+      if(err)err.style.display='block';
+    }
+  });
+  if(!valid){
+    const firstErr=document.querySelector('.q-card.error');
+    if(firstErr)firstErr.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  return valid;
+}
+
+function nextSection(){
+  if(!validate())return;
+  if(current<sections.length-1){
+    current++;
+    renderSection();
+  } else {
+    document.getElementById('surveyContent').style.display='none';
+    document.getElementById('successScreen').style.display='block';
+    document.getElementById('sectionDots').style.display='none';
+    document.querySelector('.progress-wrap').parentElement.style.background='var(--green2)';
+    document.getElementById('progFill').style.width='100%';
+    document.getElementById('progPct').textContent='100%';
+    document.getElementById('progLabel').textContent='Complete!';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+function prevSection(){
+  if(current>0){current--;renderSection();}
+}
+
+function jumpTo(i){
+  if(i<=current){current=i;renderSection();}
+}
+
+// Init
+renderSection();
+</script>
+</body>
+</html>

@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRANAM — Earth. Farmer. Food.</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#1e3d1a;--green2:#2d5a27;--green3:#3a7532;
+  --orange:#e85d04;--orangeL:#f97316;
+  --cream:#f5f0e8;--gold:#c9a84c;--goldL:#e8d48b;
+  --white:#fff;--dark:#111;--muted:#6b7280;
+  --border:#e5e7eb;--surface:#fafafa;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#fff;color:#1a1a1a;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;font-family:inherit}
+
+/* ANNOUNCEMENT */
+.announce{background:var(--green);color:rgba(255,255,255,0.9);text-align:center;padding:8px;font-size:13px;letter-spacing:.5px}
+.announce span{color:var(--gold);font-weight:600}
+
+/* TOP NAV */
+.topnav{background:#fff;border-bottom:1px solid var(--border);padding:0 4%;display:flex;align-items:center;justify-content:space-between;height:70px;position:sticky;top:0;z-index:200;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+.brand{display:flex;flex-direction:column;line-height:1}
+.brand-main{font-size:22px;font-weight:800;color:var(--green);letter-spacing:2px}
+.brand-sub{font-size:9px;letter-spacing:3px;color:var(--orange);font-weight:700;text-transform:uppercase}
+.search-bar{flex:1;max-width:480px;margin:0 32px;position:relative}
+.search-bar input{width:100%;padding:9px 16px 9px 40px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;background:var(--surface);transition:border-color .2s;outline:none}
+.search-bar input:focus{border-color:var(--green2)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px}
+.nav-actions{display:flex;align-items:center;gap:20px}
+.nav-link{font-size:14px;font-weight:500;color:var(--green);transition:color .2s;padding:4px}
+.nav-link:hover{color:var(--orange)}
+.nav-link.active{color:var(--orange);border-bottom:2px solid var(--orange)}
+.cart-btn{position:relative;background:var(--green);color:#fff;border-radius:8px;padding:8px 18px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;transition:background .2s}
+.cart-btn:hover{background:var(--green2)}
+.cart-count{background:var(--orange);color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* CATEGORY NAV */
+.catnav{background:var(--cream);border-bottom:1px solid #e0d8cc;padding:0 4%;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
+.catnav::-webkit-scrollbar{display:none}
+.cat-btn{padding:10px 18px;font-size:13px;font-weight:600;color:var(--green);background:transparent;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s}
+.cat-btn:hover,.cat-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
+
+/* HERO BANNER */
+.hero-banner{position:relative;overflow:hidden;height:480px;background:var(--green)}
+.slides{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.slide{min-width:100%;height:480px;display:flex;align-items:center;padding:0 8%;position:relative;overflow:hidden}
+.slide-1{background:linear-gradient(135deg,#1e3d1a 0%,#2d5a27 100%)}
+.slide-2{background:linear-gradient(135deg,#3a2010 0%,#7a4010 100%)}
+.slide-3{background:linear-gradient(135deg,#162038 0%,#1e3d60 100%)}
+.slide-bg{position:absolute;right:0;top:0;bottom:0;width:55%;opacity:.15;font-size:320px;font-weight:900;color:#fff;display:flex;align-items:center;justify-content:center;letter-spacing:-20px;pointer-events:none}
+.slide-content{position:relative;z-index:1;max-width:520px}
+.slide-tag{font-size:11px;letter-spacing:4px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:12px}
+.slide-title{font-size:clamp(32px,4.5vw,56px);font-weight:900;color:#fff;line-height:1.05;margin-bottom:16px}
+.slide-title em{color:var(--gold);font-style:normal}
+.slide-desc{font-size:15px;color:rgba(255,255,255,.75);line-height:1.8;margin-bottom:28px;max-width:400px}
+.slide-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-gold{background:var(--gold);color:var(--dark);padding:12px 28px;border-radius:4px;font-size:14px;font-weight:700;transition:background .2s;display:inline-block}
+.btn-gold:hover{background:var(--goldL)}
+.btn-outline-w{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:4px;font-size:14px;font-weight:600;display:inline-block;transition:border-color .2s}
+.btn-outline-w:hover{border-color:#fff}
+.slide-badges{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.sbadge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500}
+.dots{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:5}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .2s;cursor:pointer}
+.dot.active{background:#fff;width:24px;border-radius:4px}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;width:44px;height:44px;border-radius:50%;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .2s;cursor:pointer}
+.arrow:hover{background:rgba(255,255,255,.28)}
+.arrow.prev{left:20px}
+.arrow.next{right:20px}
+
+/* TRUST BAR */
+.trust-bar{background:var(--orange);display:flex;justify-content:center;gap:40px;padding:12px 4%;flex-wrap:wrap}
+.tb-item{display:flex;align-items:center;gap:8px;color:#fff;font-size:13px;font-weight:600}
+.tb-icon{font-size:16px}
+
+/* SECTION */
+.section{padding:64px 4%}
+.sec-head{text-align:center;margin-bottom:40px}
+.sec-label{font-size:11px;letter-spacing:4px;color:var(--orange);font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.sec-title{font-size:clamp(24px,3.5vw,36px);font-weight:800;color:var(--green);line-height:1.2;margin-bottom:10px}
+.sec-sub{font-size:15px;color:var(--muted);max-width:540px;margin:0 auto;line-height:1.7}
+
+/* CATEGORY CARDS */
+.cat-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;max-width:1200px;margin:0 auto}
+.cat-card{border-radius:12px;overflow:hidden;cursor:pointer;position:relative;transition:transform .2s;height:160px;display:flex;align-items:flex-end;padding:16px}
+.cat-card:hover{transform:translateY(-4px)}
+.cat-card-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.25}
+.cat-card-name{position:relative;z-index:1;font-size:15px;font-weight:700;color:#fff}
+.cat-card-count{position:relative;z-index:1;font-size:11px;color:rgba(255,255,255,.75);margin-top:2px}
+
+/* PRODUCTS */
+.products-section{background:var(--surface)}
+.filters{display:flex;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.filter-btn{padding:7px 18px;border-radius:20px;font-size:13px;font-weight:600;border:1.5px solid var(--border);background:#fff;color:var(--green);transition:all .2s}
+.filter-btn.active,.filter-btn:hover{background:var(--green);color:#fff;border-color:var(--green)}
+.sort-select{margin-left:auto;padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--green);background:#fff;outline:none}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;max-width:1200px;margin:0 auto}
+.pcard{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer}
+.pcard:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(30,61,26,.12)}
+.pcard-img{height:180px;display:flex;align-items:center;justify-content:center;font-size:72px;position:relative;background:var(--cream)}
+.pcard-badge{position:absolute;top:10px;left:10px;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.5px}
+.pcard-tag{position:absolute;top:10px;right:10px;background:rgba(30,61,26,.85);color:#fff;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px}
+.pcard-body{padding:14px}
+.pcard-farmer{font-size:11px;color:var(--orange);font-weight:700;letter-spacing:.5px;margin-bottom:4px;text-transform:uppercase}
+.pcard-name{font-size:15px;font-weight:700;color:var(--green);margin-bottom:3px;line-height:1.3}
+.pcard-variety{font-size:12px;color:var(--muted);margin-bottom:10px}
+.pcard-price-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.pcard-price{font-size:18px;font-weight:800;color:var(--green)}
+.pcard-mrp{font-size:13px;color:var(--muted);text-decoration:line-through}
+.pcard-off{font-size:12px;color:#16a34a;font-weight:700}
+.pcard-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn-cart{background:var(--cream);color:var(--green);padding:8px;border-radius:6px;font-size:12px;font-weight:700;border:1.5px solid var(--green);transition:all .2s}
+.btn-cart:hover,.btn-cart.added{background:var(--green);color:#fff}
+.btn-buy{background:var(--orange);color:#fff;padding:8px;border-radius:6px;font-size:12px;font-weight:700;transition:background .2s}
+.btn-buy:hover{background:var(--orangeL)}
+.pcard-stars{font-size:11px;color:var(--gold);margin-bottom:6px}
+
+/* MID BANNER */
+.mid-banner{background:var(--cream);padding:48px 4%}
+.mid-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.mb-card{border-radius:16px;padding:36px;display:flex;flex-direction:column;justify-content:flex-end;min-height:220px;position:relative;overflow:hidden}
+.mb-card-1{background:var(--green)}
+.mb-card-2{background:#3a2010}
+.mb-bg{position:absolute;right:-10px;top:-10px;font-size:160px;opacity:.12;pointer-events:none}
+.mb-label{font-size:11px;letter-spacing:3px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.mb-title{font-size:26px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px}
+.mb-sub{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:20px}
+.mb-btn{display:inline-block;background:var(--gold);color:var(--dark);padding:10px 22px;border-radius:4px;font-size:13px;font-weight:700;transition:background .2s}
+.mb-btn:hover{background:var(--goldL)}
+
+/* FARMER FEATURE */
+.farmer-feat{background:#fff}
+.farmer-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.farmer-card{border:1px solid var(--border);border-radius:16px;padding:24px;transition:box-shadow .2s}
+.farmer-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.farmer-avatar{width:64px;height:64px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px}
+.farmer-name{font-size:17px;font-weight:700;color:var(--green);margin-bottom:2px}
+.farmer-loc{font-size:12px;color:var(--orange);font-weight:600;margin-bottom:8px}
+.farmer-bio{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:14px}
+.farmer-tags{display:flex;gap:6px;flex-wrap:wrap}
+.ftag{background:var(--cream);color:var(--green);font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px}
+
+/* ABOUT US */
+.about{background:var(--green);padding:80px 4%}
+.about-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.about-label{font-size:11px;letter-spacing:4px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:12px}
+.about-title{font-size:clamp(28px,3.5vw,42px);font-weight:800;color:#fff;line-height:1.2;margin-bottom:16px}
+.about-body{font-size:15px;color:rgba(255,255,255,.75);line-height:1.8;margin-bottom:28px}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+.astat{background:rgba(255,255,255,.08);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,.12)}
+.astat-num{font-size:28px;font-weight:900;color:var(--gold)}
+.astat-label{font-size:12px;color:rgba(255,255,255,.6);margin-top:2px}
+.about-mission{background:rgba(255,255,255,.06);border-radius:16px;padding:28px;border:1px solid rgba(255,255,255,.12)}
+.about-mission h3{font-size:18px;font-weight:700;color:#fff;margin-bottom:16px}
+.mission-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.mi-dot{width:24px;height:24px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:700;flex-shrink:0;margin-top:2px}
+.mi-text h4{font-size:14px;font-weight:700;color:#fff;margin-bottom:2px}
+.mi-text p{font-size:12px;color:rgba(255,255,255,.6);line-height:1.5}
+
+/* FOOTER */
+footer{background:#0d1f0b;padding:48px 4% 24px}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;max-width:1100px;margin-left:auto;margin-right:auto}
+.footer-brand-name{font-size:20px;font-weight:800;color:#fff;letter-spacing:2px;margin-bottom:4px}
+.footer-brand-sub{font-size:11px;color:var(--gold);letter-spacing:2px;font-weight:600;margin-bottom:16px}
+.footer-desc{font-size:13px;color:rgba(255,255,255,.5);line-height:1.8}
+.footer-col h4{font-size:13px;font-weight:700;color:#fff;letter-spacing:.5px;margin-bottom:16px;text-transform:uppercase}
+.footer-col a{display:block;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:10px;transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;max-width:1100px;margin:0 auto}
+.footer-bottom p{font-size:12px;color:rgba(255,255,255,.35)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:16px;max-width:820px;width:100%;max-height:90vh;overflow-y:auto;animation:slideUp .3s both}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border)}
+.modal-header h2{font-size:20px;font-weight:700;color:var(--green)}
+.modal-close{background:var(--surface);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.modal-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.modal-img{height:320px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:120px;border-radius:0 0 0 16px}
+.modal-info{padding:28px}
+.modal-farmer-tag{font-size:11px;color:var(--orange);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.modal-name{font-size:24px;font-weight:800;color:var(--green);margin-bottom:4px}
+.modal-variety{font-size:14px;color:var(--muted);margin-bottom:12px}
+.modal-stars{color:var(--gold);font-size:14px;margin-bottom:12px}
+.modal-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:16px}
+.modal-price{font-size:28px;font-weight:900;color:var(--green)}
+.modal-mrp{font-size:15px;color:var(--muted);text-decoration:line-through}
+.modal-off{font-size:13px;color:#16a34a;font-weight:700}
+.modal-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.modal-trace{background:var(--cream);border-radius:8px;padding:12px;margin-bottom:16px}
+.modal-trace-title{font-size:11px;font-weight:700;color:var(--green);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.trace-row{display:flex;gap:8px;font-size:12px;margin-bottom:4px}
+.trace-key{color:var(--muted);width:90px;flex-shrink:0}
+.trace-val{color:var(--green);font-weight:600}
+.qty-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.qty-label{font-size:13px;font-weight:600;color:var(--green)}
+.qty-ctrl{display:flex;align-items:center;gap:0;border:1.5px solid var(--border);border-radius:8px;overflow:hidden}
+.qty-btn{width:32px;height:32px;background:#fff;font-size:16px;font-weight:700;color:var(--green);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+.qty-btn:hover{background:var(--cream)}
+.qty-num{width:40px;text-align:center;font-size:15px;font-weight:700;color:var(--green)}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-add-cart{background:#fff;border:2px solid var(--green);color:var(--green);padding:12px;border-radius:8px;font-size:14px;font-weight:700;transition:all .2s}
+.modal-add-cart:hover{background:var(--green);color:#fff}
+.modal-buy{background:var(--orange);color:#fff;padding:12px;border-radius:8px;font-size:14px;font-weight:700;transition:background .2s}
+.modal-buy:hover{background:var(--orangeL)}
+.modal-size-row{margin-bottom:16px}
+.size-label{font-size:12px;font-weight:600;color:var(--green);margin-bottom:8px}
+.size-btns{display:flex;gap:8px}
+.size-btn{border:1.5px solid var(--border);background:#fff;color:var(--green);padding:6px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.size-btn.active,.size-btn:hover{border-color:var(--green);background:var(--green);color:#fff}
+
+/* CART DRAWER */
+.cart-drawer{position:fixed;right:-380px;top:0;bottom:0;width:380px;background:#fff;z-index:300;box-shadow:-4px 0 24px rgba(0,0,0,.12);transition:right .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.cart-drawer.open{right:0}
+.cart-head{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-head h3{font-size:18px;font-weight:700;color:var(--green)}
+.cart-close{background:var(--surface);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.cart-items{flex:1;overflow-y:auto;padding:16px}
+.cart-empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.cart-empty-icon{font-size:48px;margin-bottom:12px}
+.cart-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.ci-icon{width:56px;height:56px;background:var(--cream);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.ci-info{flex:1}
+.ci-name{font-size:14px;font-weight:700;color:var(--green);margin-bottom:2px}
+.ci-size{font-size:11px;color:var(--muted)}
+.ci-price{font-size:15px;font-weight:700;color:var(--orange);margin-top:4px}
+.ci-remove{font-size:18px;color:var(--muted);cursor:pointer;padding:4px;transition:color .2s}
+.ci-remove:hover{color:#dc2626}
+.cart-foot{padding:20px;border-top:1px solid var(--border)}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.cart-total-label{font-size:15px;font-weight:600;color:var(--muted)}
+.cart-total-val{font-size:22px;font-weight:800;color:var(--green)}
+.checkout-btn{width:100%;background:var(--orange);color:#fff;padding:14px;border-radius:8px;font-size:16px;font-weight:700;transition:background .2s}
+.checkout-btn:hover{background:var(--orangeL)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:500;transition:transform .3s;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:900px){
+  .cat-cards{grid-template-columns:repeat(3,1fr)}
+  .about-inner,.mid-inner{grid-template-columns:1fr}
+  .modal-body{grid-template-columns:1fr}
+  .modal-img{border-radius:0}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .farmer-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .search-bar{display:none}
+  .cat-cards{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="announce">Free delivery on orders above ₹599 &nbsp;|&nbsp; <span>First order 10% off</span> &nbsp;|&nbsp; QR-verified from farm to your door</div>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="brand">
+    <svg width="160" height="54" viewBox="0 0 160 54" xmlns="http://www.w3.org/2000/svg">
+      <!-- Circle emblem -->
+      <g transform="translate(4,2)">
+        <!-- Outer circle -->
+        <circle cx="23" cy="23" r="21" fill="none" stroke="#1e3d1a" stroke-width="1.5"/>
+        <!-- Radiating seeds/petals at top -->
+        <g fill="#1e3d1a">
+          <ellipse cx="23" cy="4.5" rx="1.1" ry="2.2"/>
+          <ellipse cx="23" cy="4.5" rx="1.1" ry="2.2" transform="rotate(25 23 23)"/>
+          <ellipse cx="23" cy="4.5" rx="1.1" ry="2.2" transform="rotate(-25 23 23)"/>
+          <ellipse cx="23" cy="4.5" rx="1.1" ry="2.2" transform="rotate(50 23 23)"/>
+          <ellipse cx="23" cy="4.5" rx="1.1" ry="2.2" transform="rotate(-50 23 23)"/>
+          <ellipse cx="23" cy="4.5" rx="1.1" ry="2.2" transform="rotate(75 23 23)"/>
+          <ellipse cx="23" cy="4.5" rx="1.1" ry="2.2" transform="rotate(-75 23 23)"/>
+        </g>
+        <!-- Sun arc -->
+        <path d="M11 22 Q23 10 35 22" fill="none" stroke="#1e3d1a" stroke-width="1.3"/>
+        <!-- Bowl / plate shape -->
+        <path d="M13 28 Q13 35 23 35 Q33 35 33 28 Z" fill="none" stroke="#1e3d1a" stroke-width="1.3"/>
+        <!-- Food mound in bowl -->
+        <ellipse cx="23" cy="28" rx="8" ry="3.5" fill="#1e3d1a" opacity=".15"/>
+        <path d="M16 28 Q20 23 23 25 Q26 23 30 28" fill="none" stroke="#1e3d1a" stroke-width="1.1"/>
+        <!-- Small plant sprout -->
+        <path d="M23 24 Q23 19 23 17" stroke="#1e3d1a" stroke-width="1" fill="none"/>
+        <path d="M23 20 Q20 17 18 18" stroke="#1e3d1a" stroke-width="1" fill="none"/>
+        <path d="M23 19 Q26 16 28 17" stroke="#1e3d1a" stroke-width="1" fill="none"/>
+        <!-- Left hand/wing -->
+        <path d="M13 28 Q9 26 8 22 Q10 20 13 24" fill="#1e3d1a" opacity=".7"/>
+        <path d="M13 28 Q8 30 7 34 Q10 37 14 33" fill="none" stroke="#1e3d1a" stroke-width="1"/>
+        <!-- Right hand/wing -->
+        <path d="M33 28 Q37 26 38 22 Q36 20 33 24" fill="#1e3d1a" opacity=".7"/>
+        <path d="M33 28 Q38 30 39 34 Q36 37 32 33" fill="none" stroke="#1e3d1a" stroke-width="1"/>
+        <!-- Decorative swirls bottom -->
+        <path d="M14 36 Q11 38 13 40 Q15 42 17 40" fill="none" stroke="#1e3d1a" stroke-width=".9"/>
+        <path d="M32 36 Q35 38 33 40 Q31 42 29 40" fill="none" stroke="#1e3d1a" stroke-width=".9"/>
+        <!-- Dots at base -->
+        <circle cx="20" cy="40" r=".8" fill="#1e3d1a"/>
+        <circle cx="23" cy="41.5" r=".8" fill="#1e3d1a"/>
+        <circle cx="26" cy="40" r=".8" fill="#1e3d1a"/>
+      </g>
+      <!-- PRANAM wordmark -->
+      <text x="54" y="24" font-family="'Segoe UI',system-ui,sans-serif" font-size="20" font-weight="800" fill="#1e3d1a" letter-spacing="2">PRANAM</text>
+      <!-- Earth. Farmer. Food. -->
+      <text x="55" y="36" font-family="'Segoe UI',system-ui,sans-serif" font-size="9" font-weight="700" fill="#e85d04" letter-spacing="1.5">Earth. Farmer. Food.</text>
+      <!-- Tagline small -->
+      <text x="55" y="46" font-family="'Segoe UI',system-ui,sans-serif" font-size="6.5" fill="#5a6e52" letter-spacing=".3">Prakruthi Raithu Aadhaaritha Natural Aahar Movement</text>
+    </svg>
+  </div>
+  <div class="search-bar">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="Search rice, millets, ghee, honey..." oninput="filterProducts()">
+  </div>
+  <div class="nav-actions">
+    <a href="#" class="nav-link active" onclick="scrollToSection('home')">Home</a>
+    <a href="#" class="nav-link" onclick="scrollToSection('shop')">Products</a>
+    <a href="#" class="nav-link" onclick="scrollToSection('farmers')">Farmers</a>
+    <a href="#" class="nav-link" onclick="scrollToSection('about')">About Us</a>
+    <button class="cart-btn" onclick="toggleCart()">
+      🛒 Cart <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- CATEGORY NAV -->
+<div class="catnav">
+  <button class="cat-btn active" onclick="setFilter('All',this)">All Products</button>
+  <button class="cat-btn" onclick="setFilter('Rice',this)">🌾 Desi Rice</button>
+  <button class="cat-btn" onclick="setFilter('Millets',this)">🌿 Millets</button>
+  <button class="cat-btn" onclick="setFilter('Pulses',this)">🫘 Pulses</button>
+  <button class="cat-btn" onclick="setFilter('Oils',this)">🫚 Oils</button>
+  <button class="cat-btn" onclick="setFilter('Sweeteners',this)">🍯 Sweeteners</button>
+  <button class="cat-btn" onclick="setFilter('Spices',this)">🌶 Spices</button>
+  <button class="cat-btn" onclick="setFilter('Dairy',this)">🥛 Dairy</button>
+</div>
+
+<!-- HERO BANNER -->
+<div class="hero-banner" id="home">
+  <div class="slides" id="slides">
+    <!-- VIDEO SLIDE -->
+    <div class="slide" style="position:relative;padding:0;overflow:hidden">
+      <video id="herovid" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0"
+        src="https://raw.githubusercontent.com/sandugga/pranam/main/Banner1.mp4">
+      </video>
+      <div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(10,25,8,0.88) 45%,rgba(10,25,8,0.25));z-index:1"></div>
+      <div class="slide-content" style="position:relative;z-index:2">
+        <div class="slide-tag">Farmer Identity · Traceability</div>
+        <div class="slide-title">Farmers Who Grow<br>With <em>Care.</em></div>
+        <div class="slide-desc">No pesticides. No chemicals. Every product carries the <strong style="color:#fff">farmer's name, farm location</strong> and harvest details — traceable from soil to your table.</div>
+        <div class="slide-btns">
+          <a href="#" class="btn-gold" onclick="scrollToSection('shop')">Shop Now</a>
+          <a href="#" class="btn-outline-w" onclick="scrollToSection('farmers')">Meet Our Farmers</a>
+        </div>
+        <div class="slide-badges">
+          <span class="sbadge">🌿 Zero Pesticides</span>
+          <span class="sbadge">👨‍🌾 Farmer Identity</span>
+          <span class="sbadge">📱 QR Traceable</span>
+          <span class="sbadge">✅ 3-Layer Verified</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide slide-1">
+      <div class="slide-bg">🌾</div>
+      <div class="slide-content">
+        <div class="slide-tag">New Harvest · Kharif 2025</div>
+        <div class="slide-title">Every <em>Seed</em><br>Carries A Story</div>
+        <div class="slide-desc">Pure, pesticide-free food grown by verified farmers using indigenous seeds and ancient wisdom — traceable to the exact farm.</div>
+        <div class="slide-btns">
+          <a href="#" class="btn-gold" onclick="scrollToSection('shop')">Shop Now</a>
+          <a href="#" class="btn-outline-w">Explore Farmers</a>
+        </div>
+        <div class="slide-badges">
+          <span class="sbadge">Zero Pesticides</span>
+          <span class="sbadge">QR Traceable</span>
+          <span class="sbadge">Indigenous Seeds</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide slide-2">
+      <div class="slide-bg">🍯</div>
+      <div class="slide-content">
+        <div class="slide-tag">Signature Range</div>
+        <div class="slide-title">Pure <em>A2</em><br>Desi Cow Ghee</div>
+        <div class="slide-desc">Bilona-method A2 Ghee made from Gir cow milk — hand-churned, unprocessed and deeply nourishing.</div>
+        <div class="slide-btns">
+          <a href="#" class="btn-gold">Shop Ghee</a>
+          <a href="#" class="btn-outline-w">Learn More</a>
+        </div>
+        <div class="slide-badges">
+          <span class="sbadge">Bilona Method</span>
+          <span class="sbadge">A2 Milk</span>
+          <span class="sbadge">Gir Cow</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide slide-3">
+      <div class="slide-bg">🌿</div>
+      <div class="slide-content">
+        <div class="slide-tag">G.R.O.W Initiative</div>
+        <div class="slide-title"><em>Reviving</em><br>Ancient Millets</div>
+        <div class="slide-desc">75+ traditional grain varieties — Foxtail, Kodo, Sorghum, Barnyard — preserved and cultivated by our farmer network across South India.</div>
+        <div class="slide-btns">
+          <a href="#" class="btn-gold" onclick="setFilter('Millets',document.querySelectorAll('.cat-btn')[2]);scrollToSection('shop')">Shop Millets</a>
+          <a href="#" class="btn-outline-w">Our Story</a>
+        </div>
+        <div class="slide-badges">
+          <span class="sbadge">Low GI</span>
+          <span class="sbadge">Heritage Varieties</span>
+          <span class="sbadge">Gluten Free</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="arrow prev" onclick="changeSlide(-1)">‹</button>
+  <button class="arrow next" onclick="changeSlide(1)">›</button>
+  <div class="dots">
+    <div class="dot active" onclick="goSlide(0)"></div>
+    <div class="dot" onclick="goSlide(1)"></div>
+    <div class="dot" onclick="goSlide(2)"></div>
+    <div class="dot" onclick="goSlide(3)"></div>
+  </div>
+</div>
+
+
+
+<!-- CATEGORY SHOWCASE -->
+<div class="section">
+  <div class="sec-head">
+    <div class="sec-label">Browse by Category</div>
+    <h2 class="sec-title">What's growing this season</h2>
+  </div>
+  <div class="cat-cards">
+    <div class="cat-card" style="background:#2d5a27" onclick="setFilter('Rice',document.querySelectorAll('.cat-btn')[1]);scrollToSection('shop')">
+      <div class="cat-card-bg">🌾</div>
+      <div>
+        <div class="cat-card-name">Desi Rice</div>
+        <div class="cat-card-count">6 varieties</div>
+      </div>
+    </div>
+    <div class="cat-card" style="background:#1a4a2a" onclick="setFilter('Millets',document.querySelectorAll('.cat-btn')[2]);scrollToSection('shop')">
+      <div class="cat-card-bg">🌿</div>
+      <div>
+        <div class="cat-card-name">Millets</div>
+        <div class="cat-card-count">5 varieties</div>
+      </div>
+    </div>
+    <div class="cat-card" style="background:#3a2010" onclick="setFilter('Sweeteners',document.querySelectorAll('.cat-btn')[5]);scrollToSection('shop')">
+      <div class="cat-card-bg">🍯</div>
+      <div>
+        <div class="cat-card-name">Jaggery</div>
+        <div class="cat-card-count">3 products</div>
+      </div>
+    </div>
+    <div class="cat-card" style="background:#162038" onclick="setFilter('Dairy',document.querySelectorAll('.cat-btn')[7]);scrollToSection('shop')">
+      <div class="cat-card-bg">🥛</div>
+      <div>
+        <div class="cat-card-name">Dairy & Ghee</div>
+        <div class="cat-card-count">3 products</div>
+      </div>
+    </div>
+    <div class="cat-card" style="background:#3a1818" onclick="setFilter('Spices',document.querySelectorAll('.cat-btn')[6]);scrollToSection('shop')">
+      <div class="cat-card-bg">🌶</div>
+      <div>
+        <div class="cat-card-name">Spices & Herbs</div>
+        <div class="cat-card-count">5 products</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS SECTION -->
+<div class="section products-section" id="shop">
+  <div class="sec-head">
+    <div class="sec-label">Our Products</div>
+    <h2 class="sec-title">From the Farm, For Your Family</h2>
+    <p class="sec-sub">Every product is grown without chemicals, sourced from verified natural farmers, and QR-tagged with the farmer's identity.</p>
+  </div>
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="filters" id="filterBtns">
+      <button class="filter-btn active" onclick="setFilter('All',this)">All</button>
+      <button class="filter-btn" onclick="setFilter('Rice',this)">Rice</button>
+      <button class="filter-btn" onclick="setFilter('Millets',this)">Millets</button>
+      <button class="filter-btn" onclick="setFilter('Pulses',this)">Pulses</button>
+      <button class="filter-btn" onclick="setFilter('Oils',this)">Oils</button>
+      <button class="filter-btn" onclick="setFilter('Sweeteners',this)">Sweeteners</button>
+      <button class="filter-btn" onclick="setFilter('Spices',this)">Spices</button>
+      <button class="filter-btn" onclick="setFilter('Dairy',this)">Dairy</button>
+      <select class="sort-select" onchange="sortProducts(this.value)">
+        <option value="">Sort by</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="discount">Best Discount</option>
+      </select>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</div>
+
+<!-- MID BANNER -->
+<div class="mid-banner">
+  <div class="mid-inner">
+    <div class="mb-card mb-card-1">
+      <div class="mb-bg">🌾</div>
+      <div class="mb-label">Harvest Special</div>
+      <div class="mb-title">Traditional Rice Collection</div>
+      <div class="mb-sub">Sona Masuri, Kala Jeera, Red Rice & more — low GI, high nutrition</div>
+      <a href="#" class="mb-btn" onclick="setFilter('Rice',document.querySelectorAll('.cat-btn')[1]);scrollToSection('shop')">Shop Rice →</a>
+    </div>
+    <div class="mb-card mb-card-2">
+      <div class="mb-bg">🍯</div>
+      <div class="mb-label">Pure & Natural</div>
+      <div class="mb-title">A2 Desi Cow Ghee</div>
+      <div class="mb-sub">Bilona-method, hand-churned from Gir cows — as nature intended</div>
+      <a href="#" class="mb-btn" onclick="setFilter('Dairy',document.querySelectorAll('.cat-btn')[7]);scrollToSection('shop')">Shop Now →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FARMER PROFILES -->
+<div class="section farmer-feat" id="farmers">
+  <div class="sec-head">
+    <div class="sec-label">Meet Our Farmers</div>
+    <h2 class="sec-title">The hands behind your food</h2>
+    <p class="sec-sub">G.R.O.W partners are verified, documented and connected to supply systems. Each brings generational wisdom to their land.</p>
+  </div>
+  <div class="farmer-grid">
+    <div class="farmer-card">
+      <div class="farmer-avatar">👨‍🌾</div>
+      <div class="farmer-name">Ramu Reddy</div>
+      <div class="farmer-loc">📍 Nalgonda, Telangana</div>
+      <div class="farmer-bio">Third-generation farmer practising natural farming for 12 years. Grows traditional Sona Masuri and Red rice varieties using only cow-dung manure and neem extracts.</div>
+      <div class="farmer-tags">
+        <span class="ftag">Natural Farming</span>
+        <span class="ftag">Desi Rice</span>
+        <span class="ftag">Seed Keeper</span>
+      </div>
+    </div>
+    <div class="farmer-card">
+      <div class="farmer-avatar">👩‍🌾</div>
+      <div class="farmer-name">Lakshmi Devi</div>
+      <div class="farmer-loc">📍 Anantapur, Andhra Pradesh</div>
+      <div class="farmer-bio">Pioneer of millet revival in her district. Maintains a personal seed bank of 30+ heritage millet varieties. Trains other women farmers in her cluster on natural pest management.</div>
+      <div class="farmer-tags">
+        <span class="ftag">Millet Expert</span>
+        <span class="ftag">Seed Bank</span>
+        <span class="ftag">Cluster Leader</span>
+      </div>
+    </div>
+    <div class="farmer-card">
+      <div class="farmer-avatar">👨‍🌾</div>
+      <div class="farmer-name">Krishnappa B.</div>
+      <div class="farmer-loc">📍 Hassan, Karnataka</div>
+      <div class="farmer-bio">Specialises in spice crops — turmeric, ginger and moringa — using zero-chemical practices on 4 acres of rain-fed land. Known for his high-curcumin turmeric variety.</div>
+      <div class="farmer-tags">
+        <span class="ftag">Spice Grower</span>
+        <span class="ftag">Zero Chemical</span>
+        <span class="ftag">Rain-fed</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT US -->
+<div class="about" id="about">
+  <div class="about-inner">
+    <div>
+      <div class="about-label">Our Story</div>
+      <h2 class="about-title">A regenerative food ecosystem — reconnecting Earth, Farmer & Family</h2>
+      <p class="about-body">Somewhere along the way, modern supply chains severed the connection between seed, farmer, food and family. Rising lifestyle diseases are pushing people to ask hard questions about their food. We built PRANAM × G.R.O.W to answer them.<br><br>G.R.O.W (Generational Renewal of Wisdom) focuses on indigenous seed conservation, farmer knowledge networks and community seed banks. PRANAM is our marketplace arm — aggregating natural foods with full farmer identity and transparent supply chains.<br><br>Every rupee you spend goes towards farmer livelihoods, seed sovereignty and soil regeneration.</p>
+      <div class="about-stats">
+        <div class="astat"><div class="astat-num">300+</div><div class="astat-label">Verified farmer partners</div></div>
+        <div class="astat"><div class="astat-num">75+</div><div class="astat-label">Indigenous crop varieties</div></div>
+        <div class="astat"><div class="astat-num">3</div><div class="astat-label">States · AP, Telangana, Karnataka</div></div>
+        <div class="astat"><div class="astat-num">1,500</div><div class="astat-label">Households served in pilot</div></div>
+      </div>
+    </div>
+    <div class="about-mission">
+      <h3>Our Three Pillars</h3>
+      <div class="mission-item">
+        <div class="mi-dot">1</div>
+        <div class="mi-text">
+          <h4>Seed Sovereignty</h4>
+          <p>Preserve indigenous varieties through community seed banks. Protect the biodiversity and cultural knowledge embedded in every seed.</p>
+        </div>
+      </div>
+      <div class="mission-item">
+        <div class="mi-dot">2</div>
+        <div class="mi-text">
+          <h4>Farmer Identity</h4>
+          <p>Every product carries a farmer's name. 3-layer verification ensures authenticity. Fair pricing and direct market linkage for farmer livelihoods.</p>
+        </div>
+      </div>
+      <div class="mission-item">
+        <div class="mi-dot">3</div>
+        <div class="mi-text">
+          <h4>Regenerative Food Systems</h4>
+          <p>Natural farming improves soil health, biodiversity and climate resilience. Aligned with national missions — PKVY, RKVY, Millets Mission.</p>
+        </div>
+      </div>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)">
+        <p style="font-size:13px;color:rgba(255,255,255,.5);font-style:italic">"When we protect a seed, we protect the future."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand-name">PRANAM</div>
+      <div class="footer-brand-sub">Earth · Farmer · Food</div>
+      <p class="footer-desc">Prakruthi Raithu Aadhaaritha Natural Aahar Movement. Reconnecting seeds, farmers and families through a regenerative food ecosystem across South India.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <a href="#">Desi Rice</a>
+      <a href="#">Millets</a>
+      <a href="#">Pulses</a>
+      <a href="#">Honey & Ghee</a>
+      <a href="#">Spices & Oils</a>
+    </div>
+    <div class="footer-col">
+      <h4>G.R.O.W</h4>
+      <a href="#">Our Mission</a>
+      <a href="#">Farmer Network</a>
+      <a href="#">Seed Banks</a>
+      <a href="#">Become a Farmer Partner</a>
+      <a href="#">Verification Process</a>
+    </div>
+    <div class="footer-col">
+      <h4>Help</h4>
+      <a href="#">Track My Order</a>
+      <a href="#">Returns Policy</a>
+      <a href="#">QR Traceability</a>
+      <a href="#">Contact Us</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 PRANAM × G.R.O.W · Seed Sovereignty · Farmer Identity · Regenerative Food Systems</p>
+    <p>Andhra Pradesh · Telangana · Karnataka</p>
+  </div>
+</footer>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Product</h2>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-img" id="modalImg">🌾</div>
+      <div class="modal-info">
+        <div class="modal-farmer-tag" id="modalFarmer"></div>
+        <div class="modal-name" id="modalName"></div>
+        <div class="modal-variety" id="modalVariety"></div>
+        <div class="modal-stars">★★★★★ <span style="color:var(--muted);font-size:12px">(128 reviews)</span></div>
+        <div class="modal-price-row">
+          <span class="modal-price" id="modalPrice"></span>
+          <span class="modal-mrp" id="modalMrp"></span>
+          <span class="modal-off" id="modalOff"></span>
+        </div>
+        <div class="modal-size-row">
+          <div class="size-label">Pack Size</div>
+          <div class="size-btns" id="modalSizes"></div>
+        </div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-trace">
+          <div class="modal-trace-title">🔍 Farm Traceability</div>
+          <div id="modalTrace"></div>
+        </div>
+        <div class="qty-row">
+          <span class="qty-label">Qty:</span>
+          <div class="qty-ctrl">
+            <div class="qty-btn" onclick="changeQty(-1)">−</div>
+            <div class="qty-num" id="qtyNum">1</div>
+            <div class="qty-btn" onclick="changeQty(1)">+</div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-add-cart" onclick="addFromModal()">Add to Cart</button>
+          <button class="modal-buy" onclick="buyNow()">Buy Now →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-head">
+    <h3>My Cart</h3>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <p>Your cart is empty</p>
+      <p style="font-size:12px;margin-top:4px;color:#aaa">Add some natural goodness!</p>
+    </div>
+  </div>
+  <div class="cart-foot">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-val" id="cartTotal">₹0</span>
+    </div>
+    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout →</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const products=[
+
+  {id:2,name:'Red Rice',cat:'Rice',icon:'🔴',farmer:'Lakshmi Devi',loc:'Anantapur, AP',variety:'Mappillai Samba · Heritage',price:249,mrp:320,desc:'Ancient red rice variety rich in anthocyanins and fibre. Slow-cooked this is nutritionally dense and deeply satisfying.',sizes:['500g','1kg','5kg'],trace:{Farmer:'Lakshmi Devi',Location:'Anantapur, AP',Harvested:'Jan 2025',Batch:'AP-0221',Method:'Rain-fed · Natural'}},
+  {id:3,name:'Kala Jeera Rice',cat:'Rice',icon:'🌾',farmer:'Vijay Kumar',loc:'Krishna, AP',variety:'Black Cumin Rice · Aromatic',price:299,mrp:380,desc:'A rare aromatic rice with a distinct cumin-like fragrance. Used in traditional South Indian festive cooking.',sizes:['500g','1kg'],trace:{Farmer:'Vijay Kumar',Location:'Krishna, AP',Harvested:'Mar 2025',Batch:'AP-0389',Method:'Indigenous seed · Natural'}},
+  {id:4,name:'Foxtail Millet',cat:'Millets',icon:'🌿',farmer:'Krishnappa B.',loc:'Hassan, KA',variety:'Navane · Organic',price:149,mrp:199,desc:'One of the oldest cultivated millets. High in iron and fibre, gluten-free, great for idli, dosa and porridge.',sizes:['500g','1kg','5kg'],trace:{Farmer:'Krishnappa B.',Location:'Hassan, Karnataka',Harvested:'Feb 2025',Batch:'KA-0112',Method:'Dry-land · Zero Pesticide'}},
+  {id:5,name:'Pearl Millet',cat:'Millets',icon:'🌿',farmer:'Raju Naik',loc:'Kurnool, AP',variety:'Bajra · Traditional',price:129,mrp:169,desc:'High-protein pearl millet perfect for rotis and porridges. Grows without irrigation on dry land — climate-resilient.',sizes:['500g','1kg','5kg'],trace:{Farmer:'Raju Naik',Location:'Kurnool, AP',Harvested:'Jan 2025',Batch:'AP-0194',Method:'Dry-land · Natural'}},
+  {id:6,name:'Finger Millet',cat:'Millets',icon:'🌿',farmer:'Savitha G.',loc:'Tumkur, KA',variety:'Ragi · Heritage',price:139,mrp:180,desc:'Exceptionally rich in calcium and iron. The foundation of Karnataka cuisine — for mudde, kanji and ladoos.',sizes:['500g','1kg','5kg'],trace:{Farmer:'Savitha G.',Location:'Tumkur, Karnataka',Harvested:'Feb 2025',Batch:'KA-0201',Method:'Natural · Heirloom seed'}},
+  {id:7,name:'Black Gram',cat:'Pulses',icon:'🫘',farmer:'Rama Rao',loc:'Guntur, AP',variety:'Urad Dal · Desi',price:179,mrp:229,desc:'Small-farm urad dal grown without chemicals. Essential for idli, dosa and dal makhani. Higher protein than commercial varieties.',sizes:['500g','1kg'],trace:{Farmer:'Rama Rao',Location:'Guntur, AP',Harvested:'Dec 2024',Batch:'AP-0088',Method:'Natural · No Additives'}},
+  {id:8,name:'Horse Gram',cat:'Pulses',icon:'🫘',farmer:'Nagaraj M.',loc:'Raichur, KA',variety:'Kulthi · Ancient',price:149,mrp:189,desc:'One of the most protein-dense legumes. Traditionally used for weight management and kidney stone prevention in Ayurveda.',sizes:['500g','1kg'],trace:{Farmer:'Nagaraj M.',Location:'Raichur, Karnataka',Harvested:'Jan 2025',Batch:'KA-0145',Method:'Dry-land · Zero Input'}},
+  {id:9,name:'Cold-Pressed Groundnut Oil',cat:'Oils',icon:'🫚',farmer:'Sundar Raju',loc:'Kadapa, AP',variety:'Wood-Pressed · Unrefined',price:349,mrp:449,desc:'Extracted by wooden chekku (wood press) in small batches. No heat, no chemicals, no refining — retains all natural nutrients.',sizes:['500ml','1L'],trace:{Farmer:'Sundar Raju',Location:'Kadapa, AP',Pressed:'Mar 2025',Batch:'AP-0502',Method:'Wood-press · Unrefined'}},
+  {id:10,name:'Sesame Oil',cat:'Oils',icon:'🫚',farmer:'Prabha Devi',loc:'Nandyal, AP',variety:'Gingelly · Cold-Pressed',price:389,mrp:499,desc:'Traditional gingelly oil — cold-pressed from natural sesame seeds. Rich in sesamol and antioxidants. Essential for South Indian cooking.',sizes:['500ml','1L'],trace:{Farmer:'Prabha Devi',Location:'Nandyal, AP',Pressed:'Mar 2025',Batch:'AP-0510',Method:'Wood-press · Single source'}},
+
+  {id:12,name:'Cane Jaggery',cat:'Sweeteners',icon:'🍬',farmer:'Shivappa K.',loc:'Mandya, KA',variety:'Organic Sugarcane · Block',price:149,mrp:199,desc:'Pure jaggery blocks from organically grown sugarcane. No chemicals, no bleaching agents. Rich in iron and minerals.',sizes:['500g','1kg'],trace:{Farmer:'Shivappa K.',Location:'Mandya, Karnataka',Made:'Feb 2025',Batch:'KA-J044',Method:'Traditional · No Chemicals'}},
+  {id:13,name:'High Curcumin Turmeric',cat:'Spices',icon:'🟡',farmer:'Krishnappa B.',loc:'Hassan, KA',variety:'Lakadong · 5%+ Curcumin',price:199,mrp:269,desc:'Single-origin turmeric with curcumin content above 5%. Sun-dried and stone-ground — compared to commercial turmeric at 2-3%.',sizes:['100g','250g','500g'],trace:{Farmer:'Krishnappa B.',Location:'Hassan, Karnataka',Harvested:'Jan 2025',Batch:'KA-T066',Method:'Natural · Sun-dried'}},
+  {id:14,name:'Moringa Leaf Powder',cat:'Spices',icon:'🌱',farmer:'Seetha Devi',loc:'Chittoor, AP',variety:'Drumstick Leaves · Pure',price:229,mrp:299,desc:'Sundried moringa leaves cold-milled into fine powder. One of the most nutrient-dense plants — rich in calcium, iron and all essential amino acids.',sizes:['100g','250g'],trace:{Farmer:'Seetha Devi',Location:'Chittoor, AP',Harvested:'Mar 2025',Batch:'AP-M033',Method:'Sun-dried · No additives'}},
+  {id:15,name:'A2 Desi Cow Ghee',cat:'Dairy',icon:'🥛',farmer:'Gopal Das',loc:'Medak, TG',variety:'Bilona Method · Gir Cow',price:899,mrp:1199,desc:'Made from curd churned with wooden churner (bilona method) using milk from Gir cows. Grainy texture confirms authenticity. No buffalo milk, ever.',sizes:['250g','500g','1kg'],trace:{Farmer:'Gopal Das',Cows:'Gir breed · Grass-fed',Made:'Apr 2025',Batch:'TG-G011',Method:'Bilona · Hand-churned'}},
+];
+
+let cart=[],currentFilter='All',currentProduct=null,currentQty=1,selectedSize='';
+let slideIdx=0;
+
+function renderProducts(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  let list=products.filter(p=>(currentFilter==='All'||p.cat===currentFilter)&&(!q||(p.name+p.variety+p.farmer).toLowerCase().includes(q)));
+  const grid=document.getElementById('productsGrid');
+  grid.innerHTML=list.length?list.map(p=>{
+    const off=Math.round((p.mrp-p.price)/p.mrp*100);
+    const inCart=cart.find(c=>c.id===p.id);
+    return`<div class="pcard" onclick="openModal(${p.id})">
+      <div class="pcard-img">${p.icon}
+        <span class="pcard-badge">${off}% OFF</span>
+        <span class="pcard-tag">${p.cat}</span>
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-farmer">By ${p.farmer}</div>
+        <div class="pcard-name">${p.name}</div>
+        <div class="pcard-variety">${p.variety}</div>
+        <div class="pcard-stars">★★★★★ <span style="color:var(--muted)">(${80+p.id*7})</span></div>
+        <div class="pcard-price-row">
+          <span class="pcard-price">₹${p.price}</span>
+          <span class="pcard-mrp">₹${p.mrp}</span>
+          <span class="pcard-off">${off}% off</span>
+        </div>
+        <div class="pcard-actions" onclick="event.stopPropagation()">
+          <button class="btn-cart ${inCart?'added':''}" onclick="quickAdd(${p.id},this)">${inCart?'✓ Added':'Add to Cart'}</button>
+          <button class="btn-buy" onclick="openModal(${p.id})">Buy Now</button>
+        </div>
+      </div>
+    </div>`;
+  }).join(''):`<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--muted)">No products found for "<strong>${q||currentFilter}</strong>"</div>`;
+}
+
+function setFilter(cat,btn){
+  currentFilter=cat;
+  document.querySelectorAll('.filter-btn,.cat-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderProducts();
+}
+
+function filterProducts(){renderProducts()}
+
+function sortProducts(val){
+  if(val==='price-asc')products.sort((a,b)=>a.price-b.price);
+  else if(val==='price-desc')products.sort((a,b)=>b.price-a.price);
+  else if(val==='discount')products.sort((a,b)=>(b.mrp-b.price)/b.mrp-(a.mrp-a.price)/a.mrp);
+  renderProducts();
+}
+
+function quickAdd(id,btn){
+  const p=products.find(x=>x.id===id);
+  const size=p.sizes[0];
+  const existing=cart.find(c=>c.id===id&&c.size===size);
+  if(existing)existing.qty++;
+  else cart.push({...p,qty:1,size});
+  btn.textContent='✓ Added';btn.classList.add('added');
+  updateCart();showToast(`${p.name} added to cart!`);
+}
+
+function openModal(id){
+  const p=products.find(x=>x.id===id);
+  currentProduct=p;currentQty=1;
+  document.getElementById('modalTitle').textContent=p.name;
+  document.getElementById('modalImg').textContent=p.icon;
+  document.getElementById('modalFarmer').textContent=`By ${p.farmer} · ${p.loc}`;
+  document.getElementById('modalName').textContent=p.name;
+  document.getElementById('modalVariety').textContent=p.variety;
+  document.getElementById('modalPrice').textContent=`₹${p.price}`;
+  document.getElementById('modalMrp').textContent=`₹${p.mrp}`;
+  const off=Math.round((p.mrp-p.price)/p.mrp*100);
+  document.getElementById('modalOff').textContent=`${off}% off`;
+  document.getElementById('modalDesc').textContent=p.desc;
+  document.getElementById('qtyNum').textContent=1;
+  document.getElementById('modalSizes').innerHTML=p.sizes.map((s,i)=>`<button class="size-btn${i===0?' active':''}" onclick="selectSize('${s}',this)">${s}</button>`).join('');
+  selectedSize=p.sizes[0];
+  const tr=document.getElementById('modalTrace');
+  tr.innerHTML=Object.entries(p.trace).map(([k,v])=>`<div class="trace-row"><span class="trace-key">${k}</span><span class="trace-val">${v}</span></div>`).join('');
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function selectSize(s,btn){
+  selectedSize=s;
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function closeModal(e){if(e.target===document.getElementById('modalOverlay'))closeModalDirect()}
+function closeModalDirect(){document.getElementById('modalOverlay').classList.remove('open')}
+
+function changeQty(d){currentQty=Math.max(1,currentQty+d);document.getElementById('qtyNum').textContent=currentQty}
+
+function addFromModal(){
+  const p=currentProduct;
+  const existing=cart.find(c=>c.id===p.id&&c.size===selectedSize);
+  if(existing)existing.qty+=currentQty;
+  else cart.push({...p,qty:currentQty,size:selectedSize});
+  updateCart();showToast(`${p.name} (${selectedSize}) added!`);closeModalDirect();renderProducts();
+}
+
+function buyNow(){addFromModal();toggleCart()}
+
+function toggleCart(){document.getElementById('cartDrawer').classList.toggle('open')}
+
+function updateCart(){
+  const count=cart.reduce((s,c)=>s+c.qty,0);
+  document.getElementById('cartCount').textContent=count;
+  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById('cartTotal').textContent=`₹${total.toLocaleString('en-IN')}`;
+  const el=document.getElementById('cartItems');
+  if(!cart.length){el.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Your cart is empty</p></div>';return}
+  el.innerHTML=cart.map((c,i)=>`<div class="cart-item">
+    <div class="ci-icon">${c.icon}</div>
+    <div class="ci-info">
+      <div class="ci-name">${c.name}</div>
+      <div class="ci-size">${c.size} · Qty: ${c.qty}</div>
+      <div class="ci-price">₹${(c.price*c.qty).toLocaleString('en-IN')}</div>
+    </div>
+    <span class="ci-remove" onclick="removeItem(${i})">×</span>
+  </div>`).join('');
+}
+
+function removeItem(i){cart.splice(i,1);updateCart();renderProducts()}
+
+function checkout(){showToast('Checkout coming soon! 🙏');setTimeout(toggleCart,1000)}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+function scrollToSection(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'})}
+
+function changeSlide(d){goSlide((slideIdx+d+4)%4)}
+function goSlide(i){
+  slideIdx=i;
+  document.getElementById('slides').style.transform=`translateX(-${i*100}%)`;
+  document.querySelectorAll('.dot').forEach((d,idx)=>d.classList.toggle('active',idx===i));
+  const vid=document.getElementById('herovid');
+  if(vid){i===0?vid.play():vid.pause()}
+}
+function toggleVid(){
+  const v=document.getElementById('herovid');
+  const icon=document.getElementById('vidIcon');
+  if(v.paused){v.play();icon.textContent='⏸'}else{v.pause();icon.textContent='▶'}
+}
+setInterval(()=>changeSlide(1),6000);
+
+renderProducts();
+</script>
+</body>
+</html>
